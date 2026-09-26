@@ -45,9 +45,8 @@ function App() {
         <button className={`okerry-nav-item ${screen === 'dashboard' ? 'is-active' : ''}`} type="button" aria-current={screen === 'dashboard' ? 'page' : undefined} onClick={() => setScreen('dashboard')}><Icon name="grid" /> 대시보드</button>
         <button className={`okerry-nav-item ${screen === 'calculator' ? 'is-active' : ''}`} type="button" aria-current={screen === 'calculator' ? 'page' : undefined} onClick={() => setScreen('calculator')}><Icon name="calculator" /> 페이스 계산기</button>
       </nav>{showNavHint && <span className="run-nav-hint" aria-hidden="true">옆으로 밀기 <Icon name="arrow" size={12} /></span>}</div>
-      <div className="okerry-sidebar-footer"><div className="run-profile"><span className="run-avatar">오</span><span><strong>오케리</strong><small>러너 프로필</small></span></div></div>
     </aside>
-    <main className="okerry-main"><header className="okerry-topbar"><span className="run-mobile-title">{screen === 'dashboard' ? '대시보드' : '페이스 계산기'}</span><span className="run-topbar-meta">2024년 10월 21일 월요일</span></header>{screen === 'dashboard' ? <Dashboard onOpenCalculator={() => setScreen('calculator')} /> : <PaceCalculator />}</main>
+    <main className="okerry-main"><header className="okerry-topbar"><span className="run-mobile-title">{screen === 'dashboard' ? '대시보드' : '페이스 계산기'}</span><div className="run-topbar-right"><span className="run-topbar-meta">2024년 10월 21일 월요일</span><div className="run-profile"><span className="run-avatar">오</span><span><strong>오케리</strong></span></div></div></header>{screen === 'dashboard' ? <Dashboard onOpenCalculator={() => setScreen('calculator')} /> : <PaceCalculator />}</main>
   </div></div>
 }
 
