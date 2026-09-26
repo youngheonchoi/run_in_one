@@ -1,4 +1,5 @@
 node_modules/
+.codex/
 .next/
 out/
 dist/
@@ -24,4 +25,3 @@ pnpm-debug.log*
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.json
-
