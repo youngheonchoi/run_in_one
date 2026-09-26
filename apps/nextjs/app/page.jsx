@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 const runs = [
   { date: '오늘, 06:42', type: '이지런', distance: '6.2 km', pace: '5:42 /km', time: '35:22', tone: 'okerry-badge-primary' },
@@ -26,13 +26,25 @@ function Icon({ name, size = 18 }) {
 
 function App() {
   const [screen, setScreen] = useState('dashboard')
+  const [showNavHint, setShowNavHint] = useState(false)
+  const navRef = useRef(null)
+
+  useEffect(() => {
+    const nav = navRef.current
+    if (!nav) return undefined
+    const updateNavHint = () => setShowNavHint(nav.scrollWidth > nav.clientWidth + 1 && nav.scrollLeft < 8)
+    updateNavHint()
+    window.addEventListener('resize', updateNavHint)
+    return () => window.removeEventListener('resize', updateNavHint)
+  }, [])
+
   return <div className="okerry_ui run-app"><div className="okerry-shell">
     <aside className="okerry-sidebar" aria-label="주 메뉴">
       <div className="okerry-sidebar-brand run-brand"><span className="run-brand-mark">r</span> run in one</div>
-      <nav className="okerry-nav"><span className="okerry-nav-label">WORKSPACE</span>
+      <div className="run-nav-wrap"><nav ref={navRef} className="okerry-nav" onScroll={(event) => { if (event.currentTarget.scrollLeft > 8) setShowNavHint(false) }}><span className="okerry-nav-label">WORKSPACE</span>
         <button className={`okerry-nav-item ${screen === 'dashboard' ? 'is-active' : ''}`} type="button" aria-current={screen === 'dashboard' ? 'page' : undefined} onClick={() => setScreen('dashboard')}><Icon name="grid" /> 대시보드</button>
         <button className={`okerry-nav-item ${screen === 'calculator' ? 'is-active' : ''}`} type="button" aria-current={screen === 'calculator' ? 'page' : undefined} onClick={() => setScreen('calculator')}><Icon name="calculator" /> 페이스 계산기</button>
-      </nav>
+      </nav>{showNavHint && <span className="run-nav-hint" aria-hidden="true">옆으로 밀기 <Icon name="arrow" size={12} /></span>}</div>
       <div className="okerry-sidebar-footer"><div className="run-profile"><span className="run-avatar">오</span><span><strong>오케리</strong><small>러너 프로필</small></span></div></div>
     </aside>
     <main className="okerry-main"><header className="okerry-topbar"><span className="run-mobile-title">{screen === 'dashboard' ? '대시보드' : '페이스 계산기'}</span><span className="run-topbar-meta">2024년 10월 21일 월요일</span></header>{screen === 'dashboard' ? <Dashboard onOpenCalculator={() => setScreen('calculator')} /> : <PaceCalculator />}</main>
