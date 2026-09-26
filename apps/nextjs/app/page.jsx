@@ -41,7 +41,7 @@ function App() {
   return <div className="okerry_ui run-app"><div className="okerry-shell">
     <aside className="okerry-sidebar" aria-label="주 메뉴">
       <div className="okerry-sidebar-brand run-brand"><img className="run-brand-image" src="/run-in-one-logo.png" alt="run in one" /></div>
-      <div className="run-nav-wrap"><nav ref={navRef} className="okerry-nav" onScroll={(event) => { if (event.currentTarget.scrollLeft > 8) setShowNavHint(false) }}><span className="okerry-nav-label">WORKSPACE</span>
+      <div className="run-nav-wrap"><nav ref={navRef} className="okerry-nav" onScroll={(event) => { if (event.currentTarget.scrollLeft > 8) setShowNavHint(false) }}>
         <button className={`okerry-nav-item ${screen === 'dashboard' ? 'is-active' : ''}`} type="button" aria-current={screen === 'dashboard' ? 'page' : undefined} onClick={() => setScreen('dashboard')}><Icon name="grid" /> 대시보드</button>
         <button className={`okerry-nav-item ${screen === 'calculator' ? 'is-active' : ''}`} type="button" aria-current={screen === 'calculator' ? 'page' : undefined} onClick={() => setScreen('calculator')}><Icon name="calculator" /> 페이스 계산기</button>
       </nav>{showNavHint && <span className="run-nav-hint" aria-hidden="true">옆으로 밀기 <Icon name="arrow" size={12} /></span>}</div>
