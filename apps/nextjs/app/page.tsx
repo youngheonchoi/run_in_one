@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ChangeEvent, ReactNode } from 'react'
 
 type CalculatorId = 'pace' | 'treadmill' | 'buildup'
-type Screen = 'dashboard' | CalculatorId
+type Screen = 'dashboard' | CalculatorId | 'pace-split'
 type PaceMode = 'pace' | 'time' | 'distance'
 type IconName = 'grid' | 'calculator' | 'activity' | 'arrow' | 'trend'
 type Calculator = { id: CalculatorId; label: string; shortLabel: string }
@@ -100,10 +100,52 @@ function App() {
       <div className="run-nav-wrap"><nav ref={navRef} className="okerry-nav" onScroll={(event) => { if (event.currentTarget.scrollLeft > 8) setShowNavHint(false) }}>
         <button className={`okerry-nav-item ${screen === 'dashboard' ? 'is-active' : ''}`} type="button" aria-current={screen === 'dashboard' ? 'page' : undefined} onClick={() => setScreen('dashboard')}><Icon name="grid" /> 대시보드</button>
         <button className={`okerry-nav-item run-calculator-parent ${isCalculatorScreen ? 'is-active' : ''}`} type="button" aria-current={isCalculatorScreen ? 'page' : undefined} onClick={() => setScreen('pace')}><Icon name="calculator" /> 계산기</button>
+        <button className={`okerry-nav-item ${screen === 'pace-split' ? 'is-active' : ''}`} type="button" aria-current={screen === 'pace-split' ? 'page' : undefined} onClick={() => setScreen('pace-split')}><Icon name="activity" /> 페이스 분배표</button>
       </nav>{showNavHint && <span className="run-nav-hint" aria-hidden="true">옆으로 밀기 <Icon name="arrow" size={12} /></span>}</div>
     </aside>
-    <main className="okerry-main"><header className="okerry-topbar"><span className="run-mobile-title">{screen === 'dashboard' ? '대시보드' : activeCalculator?.label ?? '계산기'}</span><span className="run-topbar-meta" aria-live="polite">{now ? <><span>{new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' }).format(now)}</span><span className="run-topbar-clock">{new Intl.DateTimeFormat('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).format(now)}</span></> : '시간 불러오는 중'}</span><div className="run-topbar-right"><div className="run-profile"><span className="run-avatar">오</span><span><strong>오케리</strong></span></div></div></header>{screen === 'dashboard' ? <Dashboard onOpenCalculator={() => setScreen('pace')} /> : screen === 'pace' ? <PaceCalculatorV3 onSelectCalculator={setScreen} /> : screen === 'treadmill' ? <TreadmillCalculator onSelectCalculator={setScreen} /> : screen === 'buildup' ? <BuildupCalculator onSelectCalculator={setScreen} /> : <CalculatorPlaceholder calculator={activeCalculator ?? calculators[0]} onSelectCalculator={setScreen} />}</main>
+    <main className="okerry-main"><header className="okerry-topbar"><span className="run-mobile-title">{screen === 'dashboard' ? '대시보드' : activeCalculator?.label ?? '계산기'}</span><span className="run-topbar-meta" aria-live="polite">{now ? <><span>{new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' }).format(now)}</span><span className="run-topbar-clock">{new Intl.DateTimeFormat('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).format(now)}</span></> : '시간 불러오는 중'}</span><div className="run-topbar-right"><div className="run-profile"><span className="run-avatar">오</span><span><strong>오케리</strong></span></div></div></header>{screen === 'dashboard' ? <Dashboard onOpenCalculator={() => setScreen('pace')} /> : screen === 'pace' ? <PaceCalculatorV3 onSelectCalculator={setScreen} /> : screen === 'treadmill' ? <TreadmillCalculator onSelectCalculator={setScreen} /> : screen === 'buildup' ? <BuildupCalculator onSelectCalculator={setScreen} /> : screen === 'pace-split' ? <PaceSplitChart /> : <CalculatorPlaceholder calculator={activeCalculator ?? calculators[0]} onSelectCalculator={setScreen} />}</main>
   </div></div>
+}
+
+function PaceSplitChart() {
+  const [raceDistance, setRaceDistance] = useState('21.0975')
+  const [hours, setHours] = useState('0')
+  const [minutes, setMinutes] = useState('0')
+  const [seconds, setSeconds] = useState('0')
+  const [printCopies, setPrintCopies] = useState('2')
+  const totalDistance = Number(raceDistance)
+  const totalSeconds = Number(hours || 0) * 3600 + Number(minutes || 0) * 60 + Number(seconds || 0)
+  const averagePace = totalDistance > 0 && totalSeconds > 0 ? totalSeconds / totalDistance : null
+
+  const splits = useMemo(() => {
+    if (!totalDistance || !totalSeconds) return []
+    const distances = totalDistance === 21.0975
+      ? [1, 5, 10, 15, 20, 21.0975]
+      : [1, 5, 10, 15, 20, 21.0975, 25, 30, 35, 40, 42.195]
+
+    return distances.map((distance, index) => {
+      const previousDistance = index === 0 ? 0 : distances[index - 1]
+      return {
+        distance,
+        split: totalSeconds * ((distance - previousDistance) / totalDistance),
+        cumulative: totalSeconds * (distance / totalDistance),
+      }
+    })
+  }, [totalDistance, totalSeconds])
+
+  return <div className="okerry-content run-split-chart-page">
+    <header className="okerry-page-header run-page-header"><div className="okerry-page-header-text"><h1 className="run-page-title">페이스 분배표</h1><p className="okerry-page-description">목표 기록에 맞춘 주요 구간 통과 기록을 만들고, 대회 당일 손목에 붙일 수 있게 인쇄하세요.</p></div></header>
+    <div className="okerry-grid okerry-grid-aside run-calculator-grid">
+      <section className="okerry-card okerry-card-flat"><form className="okerry-card-body okerry-form" onSubmit={(event) => event.preventDefault()}>
+        <div className="okerry-field"><label className="okerry-label" htmlFor="split-distance">종목</label><select className="okerry-select" id="split-distance" value={raceDistance} onChange={(event) => setRaceDistance(event.target.value)}><option value="21.0975">half</option><option value="42.195">full</option></select></div>
+        <div className="okerry-field"><label className="okerry-label">목표 기록</label><div className="run-time-inputs"><input className="okerry-input" aria-label="목표 시간" inputMode="numeric" value={hours} onChange={(event) => setHours(event.target.value)} /><span>시간</span><input className="okerry-input" aria-label="목표 분" inputMode="numeric" value={minutes} onChange={(event) => setMinutes(event.target.value)} /><span>분</span><input className="okerry-input" aria-label="목표 초" inputMode="numeric" value={seconds} onChange={(event) => setSeconds(event.target.value)} /><span>초</span></div></div>
+        <div className="okerry-field"><label className="okerry-label" htmlFor="print-copies">한 장당 분배표 수</label><select className="okerry-select" id="print-copies" value={printCopies} onChange={(event) => setPrintCopies(event.target.value)}><option value="1">1개</option><option value="2">2개</option><option value="3">3개</option><option value="4">4개</option></select></div>
+        <button className="okerry-btn okerry-btn-primary okerry-btn-full" type="button" onClick={() => window.print()}>손목용 분배표 인쇄</button>
+      </form></section>
+      <section className="okerry-card okerry-card-sunken run-result-card"><div className="run-result-label">계산 결과</div><div className="run-result-main"><span>평균 페이스</span><strong>{averagePace ? formatPace(averagePace) : '--:--'}</strong><small>분 / km</small></div><hr className="okerry-divider" /><div className="run-result-secondary"><span>목표 기록</span><strong>{totalSeconds ? formatDuration(totalSeconds) : '--:--:--'}</strong><span>{totalDistance || 0} km 기준</span></div></section>
+    </div>
+    <section className="run-split-print" aria-labelledby="split-table-title"><div className="okerry-section-header"><div><h2 id="split-table-title" className="run-section-title">구간별 페이스 분배표</h2><p className="run-section-caption">균등 페이스 기준의 구간 기록과 누적 통과 기록입니다.</p></div></div><div className="run-split-print-sheets">{Array.from({ length: Number(printCopies) }, (_, index) => <div className="run-split-sheet" key={index}><div className="run-split-sheet-title"><strong>{totalDistance === 21.0975 ? 'HALF RACE PLAN' : 'FULL RACE PLAN'}</strong><span>{averagePace ? `${formatPace(averagePace)} /km` : '목표 기록을 입력하세요'}</span></div><table><thead><tr><th>거리</th><th>구간</th><th>누적</th></tr></thead><tbody>{splits.length ? splits.map((split) => <tr key={split.distance}><td>{split.distance === 21.0975 ? 'half' : split.distance === 42.195 ? '42.195 km' : `${split.distance} km`}</td><td>{formatDuration(split.split)}</td><td>{formatDuration(split.cumulative)}</td></tr>) : <tr><td colSpan={3}>목표 기록을 입력하면 분배표가 표시됩니다.</td></tr>}</tbody></table></div>)}</div></section>
+  </div>
 }
 
 function Dashboard({ onOpenCalculator }: { onOpenCalculator: () => void }) {
