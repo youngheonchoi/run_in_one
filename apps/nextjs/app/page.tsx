@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ChangeEvent, ReactNode } from 'react'
 
-type CalculatorId = 'pace' | 'treadmill' | 'buildup'
+type CalculatorId = 'pace' | 'treadmill' | 'buildup' | 'yasso'
 type Screen = 'dashboard' | CalculatorId | 'pace-split'
 type PaceMode = 'pace' | 'time' | 'distance'
 type IconName = 'grid' | 'calculator' | 'activity' | 'arrow' | 'trend'
@@ -25,6 +25,7 @@ const calculators: Calculator[] = [
   { id: 'pace', label: '페이스 계산기', shortLabel: '페이스 계산기' },
   { id: 'treadmill', label: '트레드밀 계산기', shortLabel: '트레드밀 계산기' },
   { id: 'buildup', label: '빌드업 계산기', shortLabel: '빌드업 계산기' },
+  { id: 'yasso', label: '야소 800 계산기', shortLabel: '야소 800 계산기' },
 ]
 
 const raceDistances = [
@@ -103,7 +104,7 @@ function App() {
         <button className={`okerry-nav-item ${screen === 'pace-split' ? 'is-active' : ''}`} type="button" aria-current={screen === 'pace-split' ? 'page' : undefined} onClick={() => setScreen('pace-split')}><Icon name="activity" /> 페이스 분배표</button>
       </nav>{showNavHint && <span className="run-nav-hint" aria-hidden="true">옆으로 밀기 <Icon name="arrow" size={12} /></span>}</div>
     </aside>
-    <main className="okerry-main"><header className="okerry-topbar"><span className="run-mobile-title">{screen === 'dashboard' ? '대시보드' : activeCalculator?.label ?? '계산기'}</span><span className="run-topbar-meta" aria-live="polite">{now ? <><span>{new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' }).format(now)}</span><span className="run-topbar-clock">{new Intl.DateTimeFormat('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).format(now)}</span></> : '시간 불러오는 중'}</span><div className="run-topbar-right"><div className="run-profile"><span className="run-avatar">오</span><span><strong>오케리</strong></span></div></div></header>{screen === 'dashboard' ? <Dashboard onOpenCalculator={() => setScreen('pace')} /> : screen === 'pace' ? <PaceCalculatorV3 onSelectCalculator={setScreen} /> : screen === 'treadmill' ? <TreadmillCalculator onSelectCalculator={setScreen} /> : screen === 'buildup' ? <BuildupCalculator onSelectCalculator={setScreen} /> : screen === 'pace-split' ? <PaceSplitChart /> : <CalculatorPlaceholder calculator={activeCalculator ?? calculators[0]} onSelectCalculator={setScreen} />}</main>
+    <main className="okerry-main"><header className="okerry-topbar"><span className="run-mobile-title">{screen === 'dashboard' ? '대시보드' : activeCalculator?.label ?? '계산기'}</span><span className="run-topbar-meta" aria-live="polite">{now ? <><span>{new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' }).format(now)}</span><span className="run-topbar-clock">{new Intl.DateTimeFormat('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).format(now)}</span></> : '시간 불러오는 중'}</span><div className="run-topbar-right"><div className="run-profile"><span className="run-avatar">오</span><span><strong>오케리</strong></span></div></div></header>{screen === 'dashboard' ? <Dashboard onOpenCalculator={() => setScreen('pace')} /> : screen === 'pace' ? <PaceCalculatorV3 onSelectCalculator={setScreen} /> : screen === 'treadmill' ? <TreadmillCalculator onSelectCalculator={setScreen} /> : screen === 'buildup' ? <BuildupCalculator onSelectCalculator={setScreen} /> : screen === 'yasso' ? <YassoCalculator onSelectCalculator={setScreen} /> : screen === 'pace-split' ? <PaceSplitChart /> : <CalculatorPlaceholder calculator={activeCalculator ?? calculators[0]} onSelectCalculator={setScreen} />}</main>
   </div></div>
 }
 
@@ -167,6 +168,16 @@ function WeeklyChart() { return <div className="run-chart"><div className="run-c
 
 function CalculatorTabs({ activeCalculator, onSelectCalculator }: CalculatorNavigationProps & { activeCalculator: CalculatorId }) {
   return <nav className="run-calculator-tabs" aria-label="계산기 종류">{calculators.map((calculator) => <button className={`run-calculator-tab ${calculator.id === activeCalculator ? 'is-active' : ''}`} type="button" key={calculator.id} aria-current={calculator.id === activeCalculator ? 'page' : undefined} onClick={() => onSelectCalculator(calculator.id)}>{calculator.shortLabel}</button>)}</nav>
+}
+
+function YassoCalculator({ onSelectCalculator }: CalculatorNavigationProps) {
+  const [hours, setHours] = useState('0')
+  const [minutes, setMinutes] = useState('0')
+  const [seconds, setSeconds] = useState('0')
+  const targetSeconds = Number(hours || 0) * 3600 + Number(minutes || 0) * 60 + Number(seconds || 0)
+  const yassoLapTime = targetSeconds > 0 ? targetSeconds / 60 : null
+
+  return <div className="okerry-content run-calculator-page"><header className="okerry-page-header run-page-header"><div className="okerry-page-header-text"><h1 className="run-page-title">야소 800 계산기</h1><p className="okerry-page-description">목표 풀코스 기록의 시간:분을 800m 랩타임으로 적용하는 10회 반복 훈련입니다.</p></div></header><CalculatorTabs activeCalculator="yasso" onSelectCalculator={onSelectCalculator} /><div className="okerry-grid okerry-grid-aside run-calculator-grid"><section className="okerry-card okerry-card-flat"><form className="okerry-card-body okerry-form" onSubmit={(event) => event.preventDefault()}><div className="okerry-field"><label className="okerry-label">목표 풀코스 기록</label><div className="run-time-inputs"><input className="okerry-input" aria-label="목표 시간" inputMode="numeric" value={hours} onChange={(event) => setHours(event.target.value)} /><span>시간</span><input className="okerry-input" aria-label="목표 분" inputMode="numeric" value={minutes} onChange={(event) => setMinutes(event.target.value)} /><span>분</span><input className="okerry-input" aria-label="목표 초" inputMode="numeric" value={seconds} onChange={(event) => setSeconds(event.target.value)} /><span>초</span></div></div><p className="okerry-help-text">예: 목표 기록이 3시간 30분이면 800m를 3분 30초에 달리고, 매 반복 뒤 400m를 같은 시간(3분 30초) 동안 천천히 조깅합니다.</p></form></section><section className="okerry-card okerry-card-sunken run-result-card run-yasso-result-card"><div className="run-result-label">계산 결과</div><div className="run-yasso-results"><div><span>800m</span><strong>{yassoLapTime ? `${Math.round(yassoLapTime)}초` : '--초'}</strong><small>{yassoLapTime ? formatPace(yassoLapTime) : '--:--'}</small></div><div><span>400m</span><strong>{yassoLapTime ? `${Math.round(yassoLapTime)}초` : '--초'}</strong><small>{yassoLapTime ? formatPace(yassoLapTime) : '--:--'}</small></div><div><span>800m 페이스</span><strong>{yassoLapTime ? formatPace(yassoLapTime / 0.8) : '--:--'}</strong><small>분 / km</small></div><div><span>400m 페이스</span><strong>{yassoLapTime ? formatPace(yassoLapTime / 0.4) : '--:--'}</strong></div></div><p className="run-yasso-note">800m 질주 + 같은 시간의 400m 조깅을 총 10회 반복합니다. 처음에는 3회부터 시작해 점진적으로 늘려 보세요.</p></section></div></div>
 }
 
 function TreadmillCalculator({ onSelectCalculator }: CalculatorNavigationProps) {
