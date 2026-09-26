@@ -22,9 +22,9 @@ const weeklyDistance = [
 ]
 
 const calculators: Calculator[] = [
-  { id: 'pace', label: '페이스 계산기', shortLabel: '페이스' },
-  { id: 'treadmill', label: '트레드밀 계산기', shortLabel: '트레드밀' },
-  { id: 'buildup', label: '빌드업 계산기', shortLabel: '빌드업' },
+  { id: 'pace', label: '페이스 계산기', shortLabel: '페이스 계산기' },
+  { id: 'treadmill', label: '트레드밀 계산기', shortLabel: '트레드밀 계산기' },
+  { id: 'buildup', label: '빌드업 계산기', shortLabel: '빌드업 계산기' },
 ]
 
 const raceDistances = [
