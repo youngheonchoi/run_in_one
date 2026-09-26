@@ -10,5 +10,8 @@
     "dev:next": "npm run dev --workspace=@run-in-one/nextjs",
     "build": "npm run build --workspace=@run-in-one/nextjs",
     "lint": "npm run lint --workspace=@run-in-one/nextjs"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
   }
 }
