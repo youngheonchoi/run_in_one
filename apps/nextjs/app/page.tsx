@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ChangeEvent, ReactNode } from 'react'
 
 type CalculatorId = 'pace' | 'treadmill' | 'buildup' | 'yasso'
-type Screen = 'dashboard' | CalculatorId | 'pace-split'
+type Screen = 'dashboard' | CalculatorId | 'pace-split' | 'race-information'
 type PaceMode = 'pace' | 'time' | 'distance'
 type IconName = 'grid' | 'calculator' | 'activity' | 'arrow' | 'trend'
 type Calculator = { id: CalculatorId; label: string; shortLabel: string }
@@ -100,12 +100,17 @@ function App() {
       <div className="okerry-sidebar-brand run-brand"><img className="run-brand-image" src="/run-in-one-logo-transparent.png" alt="run in one" /></div>
       <div className="run-nav-wrap"><nav ref={navRef} className="okerry-nav" onScroll={(event) => { if (event.currentTarget.scrollLeft > 8) setShowNavHint(false) }}>
         <button className={`okerry-nav-item ${screen === 'dashboard' ? 'is-active' : ''}`} type="button" aria-current={screen === 'dashboard' ? 'page' : undefined} onClick={() => setScreen('dashboard')}><Icon name="grid" /> 대시보드</button>
+        <button className={`okerry-nav-item ${screen === 'race-information' ? 'is-active' : ''}`} type="button" aria-current={screen === 'race-information' ? 'page' : undefined} onClick={() => setScreen('race-information')}><Icon name="activity" /> 대회 정보</button>
         <button className={`okerry-nav-item run-calculator-parent ${isCalculatorScreen ? 'is-active' : ''}`} type="button" aria-current={isCalculatorScreen ? 'page' : undefined} onClick={() => setScreen('pace')}><Icon name="calculator" /> 계산기</button>
         <button className={`okerry-nav-item ${screen === 'pace-split' ? 'is-active' : ''}`} type="button" aria-current={screen === 'pace-split' ? 'page' : undefined} onClick={() => setScreen('pace-split')}><Icon name="activity" /> 페이스 분배표</button>
       </nav>{showNavHint && <span className="run-nav-hint" aria-hidden="true">옆으로 밀기 <Icon name="arrow" size={12} /></span>}</div>
     </aside>
-    <main className="okerry-main"><header className="okerry-topbar"><span className="run-mobile-title">{screen === 'dashboard' ? '대시보드' : activeCalculator?.label ?? '계산기'}</span><span className="run-topbar-meta" aria-live="polite">{now ? <><span>{new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' }).format(now)}</span><span className="run-topbar-clock">{new Intl.DateTimeFormat('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).format(now)}</span></> : '시간 불러오는 중'}</span><div className="run-topbar-right"><div className="run-profile"><span className="run-avatar">오</span><span><strong>오케리</strong></span></div></div></header>{screen === 'dashboard' ? <Dashboard onOpenCalculator={() => setScreen('pace')} /> : screen === 'pace' ? <PaceCalculatorV3 onSelectCalculator={setScreen} /> : screen === 'treadmill' ? <TreadmillCalculator onSelectCalculator={setScreen} /> : screen === 'buildup' ? <BuildupCalculator onSelectCalculator={setScreen} /> : screen === 'yasso' ? <YassoCalculator onSelectCalculator={setScreen} /> : screen === 'pace-split' ? <PaceSplitChart /> : <CalculatorPlaceholder calculator={activeCalculator ?? calculators[0]} onSelectCalculator={setScreen} />}</main>
+    <main className="okerry-main"><header className="okerry-topbar"><span className="run-mobile-title">{screen === 'dashboard' ? '대시보드' : activeCalculator?.label ?? '계산기'}</span><span className="run-topbar-meta" aria-live="polite">{now ? <><span>{new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' }).format(now)}</span><span className="run-topbar-clock">{new Intl.DateTimeFormat('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).format(now)}</span></> : '시간 불러오는 중'}</span><div className="run-topbar-right"><div className="run-profile"><span className="run-avatar">오</span><span><strong>오케리</strong></span></div></div></header>{screen === 'dashboard' ? <Dashboard onOpenCalculator={() => setScreen('pace')} /> : screen === 'race-information' ? <RaceInformationPlaceholder /> : screen === 'pace' ? <PaceCalculatorV3 onSelectCalculator={setScreen} /> : screen === 'treadmill' ? <TreadmillCalculator onSelectCalculator={setScreen} /> : screen === 'buildup' ? <BuildupCalculator onSelectCalculator={setScreen} /> : screen === 'yasso' ? <YassoCalculator onSelectCalculator={setScreen} /> : screen === 'pace-split' ? <PaceSplitChart /> : <CalculatorPlaceholder calculator={activeCalculator ?? calculators[0]} onSelectCalculator={setScreen} />}</main>
   </div></div>
+}
+
+function RaceInformationPlaceholder() {
+  return <div className="okerry-content run-race-information-page"><header className="okerry-page-header run-page-header"><div className="okerry-page-header-text"><h1 className="run-page-title">대회 정보</h1><p className="okerry-page-description">국내 러닝 대회의 일정과 참가 정보를 한곳에서 확인할 수 있도록 준비하고 있어요.</p></div></header><section className="run-coming-soon okerry-card okerry-card-flat"><div className="okerry-card-body"><span className="okerry-badge okerry-badge-primary">준비 중</span><h2 className="run-section-title">대회 정보를 준비하고 있어요.</h2><p className="okerry-card-description">신뢰할 수 있는 공식 대회 정보를 확인한 뒤 제공할 예정입니다.</p></div></section></div>
 }
 
 function PaceSplitChart() {
