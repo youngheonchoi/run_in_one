@@ -96,7 +96,7 @@ function App() {
 
   return <div className="okerry_ui run-app" onChangeCapture={restrictNumericInput}><div className="okerry-shell">
     <aside className="okerry-sidebar" aria-label="주 메뉴">
-      <div className="okerry-sidebar-brand run-brand"><img className="run-brand-image" src="/run-in-one-logo.png" alt="run in one" /></div>
+      <div className="okerry-sidebar-brand run-brand"><img className="run-brand-image" src="/run-in-one-logo-transparent.png" alt="run in one" /></div>
       <div className="run-nav-wrap"><nav ref={navRef} className="okerry-nav" onScroll={(event) => { if (event.currentTarget.scrollLeft > 8) setShowNavHint(false) }}>
         <button className={`okerry-nav-item ${screen === 'dashboard' ? 'is-active' : ''}`} type="button" aria-current={screen === 'dashboard' ? 'page' : undefined} onClick={() => setScreen('dashboard')}><Icon name="grid" /> 대시보드</button>
         <button className={`okerry-nav-item run-calculator-parent ${isCalculatorScreen ? 'is-active' : ''}`} type="button" aria-current={isCalculatorScreen ? 'page' : undefined} onClick={() => setScreen('pace')}><Icon name="calculator" /> 계산기</button>
