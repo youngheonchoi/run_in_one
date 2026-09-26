@@ -11,7 +11,8 @@
 .run-topbar-right { display: flex; align-items: center; gap: var(--okerry-space-lg); margin-left: auto; }
 .run-nav-wrap { min-width: 0; }
 .run-nav-hint { display: none; }
-.run-topbar-meta { color: var(--okerry-color-muted); font-size: var(--okerry-font-size-xs); }
+.run-topbar-meta { display: inline-flex; align-items: center; gap: var(--okerry-space-sm); color: var(--okerry-color-muted); font-size: var(--okerry-font-size-xs); }
+.run-topbar-clock { color: var(--okerry-color-text-2); font-variant-numeric: tabular-nums; }
 .run-page-header { padding-top: var(--okerry-space-xl); }
 .run-kicker { color: var(--okerry-color-muted); font-size: 11px; font-weight: 700; letter-spacing: .12em; }
 .run-page-title { margin-top: var(--okerry-space-sm); color: var(--okerry-color-text); font-family: var(--okerry-font-serif); font-size: clamp(27px, 4vw, 38px); font-weight: 700; letter-spacing: -.04em; line-height: 1.2; }

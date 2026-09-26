@@ -27,7 +27,15 @@ function Icon({ name, size = 18 }) {
 function App() {
   const [screen, setScreen] = useState('dashboard')
   const [showNavHint, setShowNavHint] = useState(false)
+  const [now, setNow] = useState(null)
   const navRef = useRef(null)
+
+  useEffect(() => {
+    const updateNow = () => setNow(new Date())
+    updateNow()
+    const timer = window.setInterval(updateNow, 1000)
+    return () => window.clearInterval(timer)
+  }, [])
 
   useEffect(() => {
     const nav = navRef.current
@@ -46,7 +54,7 @@ function App() {
         <button className={`okerry-nav-item ${screen === 'calculator' ? 'is-active' : ''}`} type="button" aria-current={screen === 'calculator' ? 'page' : undefined} onClick={() => setScreen('calculator')}><Icon name="calculator" /> 페이스 계산기</button>
       </nav>{showNavHint && <span className="run-nav-hint" aria-hidden="true">옆으로 밀기 <Icon name="arrow" size={12} /></span>}</div>
     </aside>
-    <main className="okerry-main"><header className="okerry-topbar"><span className="run-mobile-title">{screen === 'dashboard' ? '대시보드' : '페이스 계산기'}</span><div className="run-topbar-right"><span className="run-topbar-meta">2024년 10월 21일 월요일</span><div className="run-profile"><span className="run-avatar">오</span><span><strong>오케리</strong></span></div></div></header>{screen === 'dashboard' ? <Dashboard onOpenCalculator={() => setScreen('calculator')} /> : <PaceCalculator />}</main>
+    <main className="okerry-main"><header className="okerry-topbar"><span className="run-mobile-title">{screen === 'dashboard' ? '대시보드' : '페이스 계산기'}</span><span className="run-topbar-meta" aria-live="polite">{now ? <><span>{new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' }).format(now)}</span><span className="run-topbar-clock">{new Intl.DateTimeFormat('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).format(now)}</span></> : '시간 불러오는 중'}</span><div className="run-topbar-right"><div className="run-profile"><span className="run-avatar">오</span><span><strong>오케리</strong></span></div></div></header>{screen === 'dashboard' ? <Dashboard onOpenCalculator={() => setScreen('calculator')} /> : <PaceCalculator />}</main>
   </div></div>
 }
 
