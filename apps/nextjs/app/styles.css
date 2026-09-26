@@ -64,6 +64,8 @@
 .okerry-select { min-width: 86px; padding: 0 10px; border-left: 0; border-radius: 0 var(--okerry-radius-md) var(--okerry-radius-md) 0; }
 .run-time-inputs { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr) auto; align-items: center; gap: var(--okerry-space-xs); }
 .run-time-inputs span { color: var(--okerry-color-muted); font-size: var(--okerry-font-size-xs); }
+.run-input-unit { display: inline-flex; min-width: 72px; align-items: center; justify-content: center; padding: 0 var(--okerry-space-sm); border: 1px solid var(--okerry-color-input-border); border-left: 0; border-radius: 0 var(--okerry-radius-md) var(--okerry-radius-md) 0; background: var(--okerry-color-secondary); color: var(--okerry-color-muted); font-size: var(--okerry-font-size-sm); }
+.okerry-help-text { color: var(--okerry-color-muted); font-size: var(--okerry-font-size-sm); }
 .run-pace-inputs { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto; }
 .run-mode-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--okerry-space-xs); padding: var(--okerry-space-xs); border-radius: var(--okerry-radius-md); background: var(--okerry-color-secondary); }
 .run-mode-tab { min-height: 32px; padding: 0 var(--okerry-space-xs); border: 0; border-radius: var(--okerry-radius-sm); background: transparent; color: var(--okerry-color-muted); cursor: pointer; font-size: var(--okerry-font-size-xs); }
