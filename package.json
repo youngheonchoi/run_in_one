@@ -1,0 +1,15 @@
+{
+  "name": "run_in_one",
+  "private": true,
+  "version": "0.1.0",
+  "description": "React + Vite and Next.js starter workspace",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:vite": "npm run dev --workspace=@run-in-one/vite-react",
+    "dev:next": "npm run dev --workspace=@run-in-one/nextjs",
+    "build": "npm run build --workspace=@run-in-one/vite-react && npm run build --workspace=@run-in-one/nextjs",
+    "lint": "npm run lint --workspace=@run-in-one/vite-react && npm run lint --workspace=@run-in-one/nextjs"
+  }
+}
